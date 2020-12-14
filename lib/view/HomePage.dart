@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_template/utils/langs/lang_keys.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
   static const routeName = '/HomePage';
@@ -7,7 +9,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Title'),
+        title: Text(kLogout.tr),
       ),
       body: Center(
         child: Container(

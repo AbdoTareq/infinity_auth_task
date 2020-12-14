@@ -1,14 +1,17 @@
 import 'package:alice/alice.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 
 // this for alice debugging network calls
 Alice alice = Alice(showNotification: true, navigatorKey: navigatorKey);
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
+final logger = Logger();
+
 // styles
 final Color kbackgroundColor = Colors.grey[300];
-const Color kPrimaryClolor = Colors.green;
+const Color kPrimaryColor = Colors.blue;
 const TextStyle kTStyle = TextStyle(
   fontSize: 30,
   color: Colors.white,
@@ -23,8 +26,7 @@ showWarningDialog({String title = '', String text = ''}) {
   );
 }
 
-showOptionsDialog(
-    {String title = '', String text = '', @required Function yesFunction}) {
+showOptionsDialog({String title = '', String text = '', @required Function yesFunction}) {
   Get.defaultDialog(
       title: title.isNotEmpty ? title.tr : 'watch'.tr,
       middleText: text.isNotEmpty ? text.tr : 'under_dev'.tr,

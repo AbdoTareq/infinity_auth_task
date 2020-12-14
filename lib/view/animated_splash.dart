@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_template/constants.dart';
+import 'package:get/get.dart';
 
 Widget _home;
 Function _customFunction;
@@ -39,8 +40,7 @@ class AnimatedSplash extends StatefulWidget {
   _AnimatedSplashState createState() => _AnimatedSplashState();
 }
 
-class _AnimatedSplashState extends State<AnimatedSplash>
-    with SingleTickerProviderStateMixin {
+class _AnimatedSplashState extends State<AnimatedSplash> with SingleTickerProviderStateMixin {
   AnimationController _animationController;
   Animation _animation;
 
@@ -48,10 +48,8 @@ class _AnimatedSplashState extends State<AnimatedSplash>
   void initState() {
     super.initState();
     if (_duration < 1000) _duration = 2000;
-    _animationController = new AnimationController(
-        vsync: this, duration: Duration(milliseconds: 800));
-    _animation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-        parent: _animationController, curve: Curves.easeInCirc));
+    _animationController = new AnimationController(vsync: this, duration: Duration(milliseconds: 800));
+    _animation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInCirc));
     _animationController.forward();
   }
 
@@ -59,11 +57,11 @@ class _AnimatedSplashState extends State<AnimatedSplash>
   void dispose() {
     super.dispose();
     _animationController.reset();
+    _animationController.dispose();
   }
 
   navigator(home) {
-    Navigator.of(context).pushReplacement(
-        CupertinoPageRoute(builder: (BuildContext context) => home));
+    Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (BuildContext context) => home));
   }
 
   @override
@@ -73,13 +71,11 @@ class _AnimatedSplashState extends State<AnimatedSplash>
             var res = _customFunction();
             //print("$res+${_outputAndHome[res]}");
             Future.delayed(Duration(milliseconds: _duration)).then((value) {
-              Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                  builder: (BuildContext context) => _outputAndHome[res]));
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (BuildContext context) => _outputAndHome[res]));
             });
           })
         : Future.delayed(Duration(milliseconds: _duration)).then((value) {
-            Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(builder: (BuildContext context) => _home));
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(builder: (BuildContext context) => _home));
           });
 
     return Scaffold(
@@ -95,11 +91,8 @@ class _AnimatedSplashState extends State<AnimatedSplash>
                     height: 20,
                   ),
                   Text(
-                    _title,
-                    style: TextStyle(
-                        color: kPrimaryColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25),
+                    _title.tr,
+                    style: TextStyle(color: kPrimaryColor, fontWeight: FontWeight.bold, fontSize: 25),
                   )
                 ],
               ),
