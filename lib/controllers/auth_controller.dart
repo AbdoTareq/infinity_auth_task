@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_template/constants.dart';
 import 'package:flutter_template/utils/langs/lang_keys.dart';
 import 'package:flutter_template/view/pages/auth_page.dart';
@@ -39,6 +40,7 @@ class AuthController extends GetxController {
       try {
         UserCredential credential = await authFun();
         storage.write('mail', credential.user.email);
+        storage.write('signMethod', 'mailPass');
         _resetFields();
         Get.offAll(HomePage());
       } catch (e) {
@@ -73,6 +75,7 @@ class AuthController extends GetxController {
     try {
       final GoogleSignInAccount googleUSer = await _googleSignIn.signIn();
       storage.write('mail', googleUSer.email);
+      storage.write('signMethod', 'google');
       Get.offAll(HomePage());
       Get.snackbar(
         "Success",
@@ -95,7 +98,7 @@ class AuthController extends GetxController {
 
   void signOut() async {
     try {
-      await _auth.signOut();
+      storage.read('signMethod') != 'google' ? await _auth.signOut() : await _googleSignIn.signOut();
       Get.offAll(AuthPage());
       storage.remove('mail');
     } catch (e) {
