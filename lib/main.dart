@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_template/controllers/app_binding.dart';
 import 'package:flutter_template/utils/langs/my_translation.dart';
-import 'package:flutter_template/view/HomePage.dart';
+import 'package:flutter_template/view/pages/auth_page.dart';
 import 'package:flutter_template/view/animated_splash.dart';
+import 'package:flutter_template/view/pages/home_page.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'constants.dart';
 
 Future<void> main() async {
   await GetStorage.init();
+  await Firebase.initializeApp();
+
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: kPrimaryColor // status bar color
       ));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
@@ -21,16 +26,16 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    logger.i("${Get.window.locale.toString()}");
     return GetMaterialApp(
       // this for alice debugging network calls
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      // this for auto detect
+      title: 'Infinity Auth Task',
+      // this for auto detect device language
       locale: Get.window.locale,
       fallbackLocale: Locale('en'),
       translations: MyTranslation(),
+      initialBinding: AppBinding(),
       theme: ThemeData(
         primarySwatch: kPrimaryColor,
         fontFamily: 'Cairo',
@@ -38,7 +43,7 @@ class MyApp extends StatelessWidget {
       home: AnimatedSplash(
         imagePath: 'assets/images/logo.png',
         title: 'Infinity Auth Task',
-        home: HomePage(),
+        home: GetStorage().hasData('mail') ? HomePage() : AuthPage(),
         duration: 2500,
         type: AnimatedSplashType.StaticDuration,
       ),

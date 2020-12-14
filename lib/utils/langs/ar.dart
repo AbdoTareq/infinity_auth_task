@@ -5,6 +5,9 @@ const Map<String, String> ar = {
   kSignup: 'انشاء حساب',
   kWatch: 'انتبه!',
   kLogout: 'تسجيل خروج',
-  kUsername: 'اسم المستخدم',
+  kMail: 'البريد الالكتروني',
   kPass: 'كلمة المرور',
+  kPassWar: ' كلمة المرور فارغة',
+  kMailWar: ' البريد الالكتروني فارغ',
+  kFields_war: 'ادخل المعلوكات المطلوبة',
 };

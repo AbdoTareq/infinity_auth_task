@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "705855225991",
+    "project_id": "infinity-auth-task",
+    "storage_bucket": "infinity-auth-task.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705855225991:android:23ba82e10f7461f53f7822",
+        "android_client_info": {
+          "package_name": "com.infinity.authtask"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705855225991-jubcp2j77879bqouvjg1o9b61bl49ihn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.infinity.authtask",
+            "certificate_hash": "a95ca8d9ced4129aa220162a661118e5148d7097"
+          }
+        },
+        {
+          "client_id": "705855225991-l0lnn35npg33eu1if3v881ci9s2329dn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoNaSDlwzkHn_Au_VOOlQHIUvVmV2mYDg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705855225991-l0lnn35npg33eu1if3v881ci9s2329dn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

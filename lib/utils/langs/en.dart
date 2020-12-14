@@ -5,6 +5,9 @@ const Map<String, String> en = {
   kSignup: 'signup',
   kWatch: 'watch',
   kLogout: 'logout',
-  kUsername: 'username',
+  kMail: 'mail',
   kPass: 'password',
+  kPassWar: 'Password is empty',
+  kMailWar: 'Mail is not valid',
+  kFields_war: 'Enter required fields',
 };
