@@ -17,6 +17,7 @@ class AuthController extends GetxController {
 
   final storage = GetStorage();
   final GlobalKey<FormState> formKey = GlobalKey();
+  
 
   TextEditingController mailTextController;
   TextEditingController passwordTextController;
