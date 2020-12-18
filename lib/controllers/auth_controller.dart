@@ -17,7 +17,10 @@ class AuthController extends GetxController {
 
   final storage = GetStorage();
   final GlobalKey<FormState> formKey = GlobalKey();
-  
+
+  RxString _token = ''.obs;
+  get token => this._token.value;
+  set token(value) => this._token.value = value;
 
   TextEditingController mailTextController;
   TextEditingController passwordTextController;
@@ -29,29 +32,13 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    token = storage.hasData('token') ? storage.read('token') : '';
     _firebaseUser.bindStream(_auth.authStateChanges());
     mailTextController = TextEditingController();
     passwordTextController = TextEditingController();
   }
 
   toggleLogin() => _isSignIn.toggle();
-
-  void submit(Future<UserCredential> Function() authFun) async {
-    if (formKey.currentState.validate()) {
-      try {
-        UserCredential credential = await authFun();
-        storage.write('mail', credential.user.email);
-        storage.write('signMethod', 'mailPass');
-        _resetFields();
-        Get.offAll(HomePage());
-      } catch (e) {
-        Get.back();
-        Get.snackbar("Error", e.message,
-            duration: Duration(seconds: 6), backgroundColor: Colors.red, snackPosition: SnackPosition.BOTTOM, margin: EdgeInsets.all(8));
-      }
-    } else
-      showWarningDialog(text: kFields_war.tr);
-  }
 
   void signup() async {
     submit(() {
@@ -70,23 +57,63 @@ class AuthController extends GetxController {
     });
   }
 
+  void submit(Future<UserCredential> Function() authFun) async {
+    if (formKey.currentState.validate()) {
+      try {
+        Get.dialog(Center(child: CircularProgressIndicator()), barrierDismissible: false);
+
+        UserCredential credential = await authFun();
+        storage.write('mail', credential.user.email);
+        storage.write('token', await credential.user.getIdToken());
+        token = await credential.user.getIdToken();
+        logger.i("$token");
+
+        storage.write('signMethod', 'mailPass');
+        _resetFields();
+      } catch (e) {
+        Get.back();
+        Get.snackbar("Error", e.message,
+            duration: Duration(seconds: 6), backgroundColor: Colors.red, snackPosition: SnackPosition.BOTTOM, margin: EdgeInsets.all(8));
+      } finally {
+        if (Get.isDialogOpen) {
+          Get.back();
+        }
+      }
+    } else
+      showWarningDialog(text: kFields_war.tr);
+  }
+
   void signWithGoogle() async {
     Get.dialog(Center(child: CircularProgressIndicator()), barrierDismissible: false);
 
     try {
+      // these for signing with google ther get data from google
       final GoogleSignInAccount googleUSer = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleSignInAuthentication = await googleUSer.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      // this to record the user into firebase accounts
+      final UserCredential authResult = await _auth.signInWithCredential(credential);
+      final User user = authResult.user;
+      if (user != null) {
+        assert(!user.isAnonymous);
+        assert(await user.getIdToken() != null);
+
+        final User currentUser = _auth.currentUser;
+        assert(user.uid == currentUser.uid);
+      }
+
       storage.write('mail', googleUSer.email);
       storage.write('signMethod', 'google');
-      Get.offAll(HomePage());
-      Get.snackbar(
-        "Success",
-        googleUSer.toString(),
-        duration: Duration(seconds: 6),
-        backgroundColor: Colors.green,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+
+      token = googleUSer.id;
+      storage.write('token', googleSignInAuthentication.idToken);
+      googleSignInAuthentication.printInfo();
+      logger.i("${googleSignInAuthentication.idToken}");
     } catch (e) {
-      Get.back();
       Get.snackbar(
         "Error signing in",
         e.message,
@@ -94,13 +121,18 @@ class AuthController extends GetxController {
         backgroundColor: Colors.red,
         snackPosition: SnackPosition.BOTTOM,
       );
+    } finally {
+      if (Get.isDialogOpen) {
+        Get.back();
+      }
     }
   }
 
   void signOut() async {
     try {
       storage.read('signMethod') != 'google' ? await _auth.signOut() : await _googleSignIn.signOut();
-      Get.offAll(AuthPage());
+      storage.remove('token');
+      token = '';
       storage.remove('mail');
     } catch (e) {
       Get.snackbar(

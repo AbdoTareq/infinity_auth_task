@@ -10,6 +10,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'constants.dart';
+import 'controllers/auth_controller.dart';
 
 Future<void> main() async {
   await GetStorage.init();
@@ -43,7 +44,12 @@ class MyApp extends StatelessWidget {
       home: AnimatedSplash(
         imagePath: 'assets/images/logo.png',
         title: 'Infinity Auth Task',
-        home: GetStorage().hasData('mail') ? HomePage() : AuthPage(),
+        home: GetX<AuthController>(
+          init: AuthController(),
+          builder: (controller) {
+            return controller.token.isEmpty ? AuthPage() : HomePage();
+          },
+        ),
         duration: 2500,
         type: AnimatedSplashType.StaticDuration,
       ),
